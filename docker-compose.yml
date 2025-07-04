@@ -1,0 +1,61 @@
+#version: '3.8' # Versión de la sintaxis de Docker Compose
+
+services:
+  # Servicio de la Base de Datos PostgreSQL
+  db:
+    image: postgres:13-alpine # Usa una imagen oficial de PostgreSQL, versión 13, ligera
+    restart: always # Siempre reinicia el contenedor si se detiene
+    environment: # Variables de entorno para la configuración de PostgreSQL
+      POSTGRES_DB: ${DB_DATABASE}     # Nombre de la base de datos (tomado de .env)
+      POSTGRES_USER: ${DB_USERNAME}   # Usuario de la base de datos (tomado de .env)
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # Contraseña de la base de datos (tomado de .env)
+    volumes:
+      - ./db_data:/var/lib/postgresql/data # Persistencia de datos para que no se pierdan al detener el contenedor
+    ports:
+      - "5432:5432" # Mapea el puerto 5432 del host al 5432 del contenedor
+    healthcheck: # Comprobación de salud para asegurar que la DB esté lista antes que el backend
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Servicio del Backend (NestJS)
+  backend:
+    build:
+      context: ./backend # Ruta al Dockerfile del backend
+      dockerfile: Dockerfile
+    restart: always
+    environment: # Variables de entorno para la conexión a la DB y otros del backend
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE} # URL de conexión a la DB. 'db' es el nombre del servicio de DB en docker-compose
+      PORT: 3000 # Puerto en el que correrá el backend dentro del contenedor
+      # Puedes añadir otras variables de entorno si las necesitas para el backend
+    ports:
+      - "3000:3000" # Mapea el puerto 3000 del host al 3000 del contenedor
+    volumes:
+      - ./backend:/app # Monta el código fuente local al contenedor para desarrollo (cambios en vivo)
+      - /app/node_modules # Evita que node_modules local sobreescriba los del contenedor
+    depends_on: # Asegura que el servicio 'db' esté listo antes de iniciar el 'backend'
+      db:
+        condition: service_healthy # Espera hasta que la comprobación de salud de 'db' sea exitosa
+    env_file:
+    - .env # Carga las variables de entorno desde el archivo .env
+
+  # Servicio del Frontend (React)
+  frontend:
+    build:
+      context: ./frontend # Ruta al Dockerfile del frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment: # Variables de entorno para el frontend (ej. URL del backend)
+      VITE_API_URL: http://localhost:3000/api # URL del backend. Usa localhost si el frontend se accede desde el navegador del host
+    ports:
+      - "5173:5173" # Mapea el puerto 5173 del host (puerto por defecto de Vite)
+    volumes:
+      - ./frontend:/app # Monta el código fuente local al contenedor
+      - /app/node_modules # Evita que node_modules local sobreescriba los del contenedor
+    depends_on:
+      - backend # El frontend puede depender del backend (opcional, pero buena práctica si el frontend necesita el backend para arrancar)
+
+# Volúmenes para persistencia de datos (opcional, pero recomendado)
+volumes:
+  db_data: {} # Declara el volumen para PostgreSQL

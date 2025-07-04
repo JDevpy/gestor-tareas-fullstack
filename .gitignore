@@ -1,0 +1,21 @@
+# Archivos de Node.js
+node_modules/
+npm-debug.log
+.DS_Store
+
+# Variables de entorno
+.env
+backend/.env
+frontend/.env
+
+# Builds de producción y caches
+dist/
+build/
+*.log
+
+# Docker
+.dockerignore
+
+# Otros
+*.env.*local
+.vscode/

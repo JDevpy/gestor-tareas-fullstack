@@ -1,0 +1,23 @@
+/* style/index.css */
+
+/* Directivas de Tailwind CSS:
+   Estas directivas inyectan los estilos base, componentes y utilidades
+   generados por Tailwind CSS en tu hoja de estilos final.
+   Son esenciales para que Tailwind funcione correctamente.
+*/
+@tailwind base;        /* Incluye los estilos base de Tailwind (reset CSS, etc.) */
+@tailwind components;  /* Incluye las clases de componentes de Tailwind (si defines algunas personalizadas) */
+@tailwind utilities;   /* Incluye las clases de utilidad de Tailwind (margen, padding, colores, flexbox, etc.) */
+
+
+/* Estilos CSS personalizados (fuera de Tailwind) */
+
+#root {
+  margin: 0;      
+  padding: 0;      
+  height: 100%;   
+}
+
+html {
+  background-color: #d1d1d1; 
+}
