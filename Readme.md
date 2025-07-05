@@ -4,20 +4,24 @@ Este proyecto es un gestor de tareas completo, con un backend robusto construido
 🚀 Instalación y Configuración
 Sigue estos pasos para poner el proyecto en marcha en tu máquina local.
 
-Prerrequisitos
+## ⚙️ Prerrequisitos
+
 Asegúrate de tener instalado lo siguiente:
 
 Docker Desktop: Incluye Docker Engine y Docker Compose. Puedes descargarlo desde docker.com.
 
-Clonar el Repositorio
+## 1.- Clonar el Repositorio
+
 Primero, clona el repositorio a tu máquina local:
 
 git clone https://github.com/JDevpy/gestor-tareas-fullstack
-cd Test Evol
+cd gestor-tareas-fullstack
 
 ---
 
 ## ⚙️ Variables de Entorno Necesarias
+
+## 2.-Crear Archivos .env
 
 Aquí se detallan las variables de entorno utilizadas en el proyecto. Asegúrate de configurarlas correctamente en los archivos `.env` apropiados, en caso de que no existan, deben crearse.
 
@@ -49,10 +53,46 @@ Este archivo es utilizado por Vite para exponer variables de entorno al código 
 
 ---
 
-Construcción y Ejecución con Docker Compose
+💻 Construcción y Ejecución con Docker Compose
+
+## 3.-Instalar Dependencias de Node.js:
+
+Luego de crear los archivos .env en los directorios indicados se deben instalar las dependencias de Node.js:
+Navega tanto a los directorios backend como frontend e instala sus respectivas dependencias:
+
+## Para el backend:
+
+cd backend
+npm install
+cd ..
+
+## Para el frontend:
+
+cd frontend
+npm install
+cd ..
+
+## 4.-Generar Archivos de Distribución (Dist):
+
+Luego, crea los archivos dist listos para producción tanto para el frontend como para el backend. Esto es crucial para que Docker construya las imágenes correctamente.
+
+## Para el backend:
+
+cd backend
+npm run build
+cd ..
+
+## Para el frontend:
+
+cd frontend
+npm run build
+cd ..
+
+## 5.-Ejecutar Docker Compose:
+
 Una vez configurado, puedes levantar todo el stack con un solo comando(Recuerda que debes estar en la carpeta raíz del proyecto):
 
-- docker compose up --build
+docker compose up --build
 
 💻 Comandos de Ejecución
 Aquí están los comandos principales para interactuar con tu aplicación.
